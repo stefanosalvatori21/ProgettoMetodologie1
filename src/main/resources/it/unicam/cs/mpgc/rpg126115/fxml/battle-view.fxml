@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+
+<!-- ════════════════════════════════════════════════════════════
+     BATTLE VIEW
+     fx:id invariati: bgRegion, playerAvatarBox, playerImageView,
+       playerHitOverlay, playerHpBar, playerReiBar, playerNameLabel,
+       transformStateLabel, playerStatsLabel, battleLogArea,
+       enemyAvatarBox, enemyImageView, enemyHitOverlay, enemyHpBar,
+       enemyNameLabel, difficultyLabel, enemyStatsLabel, actionBar,
+       abilitiesBtn, transformBtn, itemsBtn, endOverlay, endPanel,
+       endTitleLabel, endSubtitleLabel, endDetailsLabel, endConfirmBtn,
+       selectionOverlay, selectionTitle, selectionSubtitle, selectionGrid
+     Handler invariati: #onAttack #onAbilities #onDefend #onTransform
+       #onItems #onEndConfirm #onSelectionCancel
+     ════════════════════════════════════════════════════════════ -->
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="it.unicam.cs.mpgc.rpg126115.controller.BattleController"
+           styleClass="root-pane">
+
+    <Region fx:id="bgRegion" maxWidth="Infinity" maxHeight="Infinity"/>
+    <Region styleClass="scrim" maxWidth="Infinity" maxHeight="Infinity"
+            mouseTransparent="true"/>
+
+    <BorderPane styleClass="transparent-pane">
+
+        <!-- CENTER: giocatore | log | nemico — statistiche SOTTO i ritratti -->
+        <center>
+            <HBox spacing="14" alignment="CENTER">
+                <padding><Insets top="10" right="18" bottom="8" left="18"/></padding>
+
+                <!-- ══ COLONNA GIOCATORE ══ -->
+                <VBox alignment="CENTER" spacing="5" prefWidth="210" minWidth="170"
+                      HBox.hgrow="NEVER">
+
+                    <!-- Ritratto + overlay flash colpo (target delle animazioni) -->
+                    <StackPane fx:id="playerAvatarBox" styleClass="battle-avatar-box" alignment="CENTER">
+                        <ImageView fx:id="playerImageView" fitWidth="195" fitHeight="280"
+                                   preserveRatio="true" smooth="true"/>
+                        <Region fx:id="playerHitOverlay" maxWidth="Infinity" maxHeight="Infinity"
+                                opacity="0" mouseTransparent="true"/>
+                    </StackPane>
+
+                    <!-- Barra HP -->
+                    <HBox spacing="5" alignment="CENTER_LEFT" maxWidth="Infinity">
+                        <Label text="HP" styleClass="bar-side-label, bar-side-hp"/>
+                        <ProgressBar fx:id="playerHpBar" styleClass="battle-hp-bar"
+                                     maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Barra REI -->
+                    <HBox spacing="5" alignment="CENTER_LEFT" maxWidth="Infinity">
+                        <Label text="REI" styleClass="bar-side-label, bar-side-rei"/>
+                        <ProgressBar fx:id="playerReiBar" styleClass="battle-rei-bar"
+                                     maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Nome + stato trasformazione + statistiche -->
+                    <Label fx:id="playerNameLabel" styleClass="fighter-name-label"
+                           maxWidth="Infinity" alignment="CENTER" wrapText="true"/>
+                    <Label fx:id="transformStateLabel" styleClass="transform-state-label"
+                           maxWidth="Infinity"/>
+                    <Label fx:id="playerStatsLabel" styleClass="combatant-stats-mini"
+                           maxWidth="Infinity" alignment="CENTER"/>
+                </VBox>
+
+                <!-- ══ LOG DI BATTAGLIA ══ -->
+                <VBox spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label text="VS" styleClass="vs-label"/>
+                    <TextArea fx:id="battleLogArea" editable="false" wrapText="true"
+                              styleClass="battle-log-area"
+                              VBox.vgrow="ALWAYS" maxHeight="Infinity"/>
+                </VBox>
+
+                <!-- ══ COLONNA NEMICO ══ -->
+                <VBox alignment="CENTER" spacing="5" prefWidth="210" minWidth="170"
+                      HBox.hgrow="NEVER">
+
+                    <!-- Ritratto + overlay flash colpo -->
+                    <StackPane fx:id="enemyAvatarBox" styleClass="battle-avatar-box, enemy-avatar-box"
+                               alignment="CENTER">
+                        <ImageView fx:id="enemyImageView" fitWidth="195" fitHeight="280"
+                                   preserveRatio="true" smooth="true"/>
+                        <Region fx:id="enemyHitOverlay" maxWidth="Infinity" maxHeight="Infinity"
+                                opacity="0" mouseTransparent="true"/>
+                    </StackPane>
+
+                    <!-- Barra HP -->
+                    <HBox spacing="5" alignment="CENTER_LEFT" maxWidth="Infinity">
+                        <Label text="HP" styleClass="bar-side-label, bar-side-enemy"/>
+                        <ProgressBar fx:id="enemyHpBar" styleClass="battle-enemy-bar"
+                                     maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Spaziatore allineato alla barra REI del giocatore -->
+                    <Region prefHeight="18"/>
+
+                    <!-- Nome + difficoltà + statistiche -->
+                    <Label fx:id="enemyNameLabel" styleClass="enemy-name-label"
+                           maxWidth="Infinity" alignment="CENTER" wrapText="true"/>
+                    <Label fx:id="difficultyLabel" styleClass="difficulty-label"
+                           maxWidth="Infinity"/>
+                    <Label fx:id="enemyStatsLabel" styleClass="combatant-stats-mini"
+                           maxWidth="Infinity" alignment="CENTER"/>
+                </VBox>
+            </HBox>
+        </center>
+
+        <!-- BOTTOM: pulsanti azione -->
+        <bottom>
+            <VBox styleClass="battle-bottom-bar" spacing="8">
+                <Label text="━━  Scegli la tua azione  ━━"
+                       styleClass="action-prompt" maxWidth="Infinity"/>
+                <HBox fx:id="actionBar" spacing="10">
+                    <Button text="⚔  Attacca"   onAction="#onAttack"
+                            styleClass="action-button" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="abilitiesBtn" onAction="#onAbilities"
+                            styleClass="action-button" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    <Button text="🛡  Difendi"   onAction="#onDefend"
+                            styleClass="action-button" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="transformBtn" onAction="#onTransform"
+                            styleClass="transform-button" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="itemsBtn"     onAction="#onItems"
+                            styleClass="action-button" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+        </bottom>
+    </BorderPane>
+
+    <!-- OVERLAY DI FINE — vittoria / sconfitta -->
+    <VBox fx:id="endOverlay" visible="false"
+          maxWidth="Infinity" maxHeight="Infinity" alignment="CENTER"
+          styleClass="scrim-modal">
+        <VBox fx:id="endPanel" styleClass="end-panel" maxWidth="540" alignment="CENTER" spacing="0">
+            <padding><Insets top="42" right="52" bottom="42" left="52"/></padding>
+            <Label fx:id="endTitleLabel" maxWidth="Infinity" alignment="CENTER"/>
+            <Region prefHeight="20"/>
+            <Label fx:id="endSubtitleLabel" styleClass="end-subtitle"
+                   wrapText="true" maxWidth="440" alignment="CENTER"/>
+            <Region prefHeight="14"/>
+            <Label fx:id="endDetailsLabel" styleClass="end-details"
+                   wrapText="true" maxWidth="440" alignment="CENTER"/>
+            <Region prefHeight="30"/>
+            <HBox alignment="CENTER">
+                <Button fx:id="endConfirmBtn" onAction="#onEndConfirm"
+                        styleClass="end-confirm-btn"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <!-- OVERLAY DI SELEZIONE — abilità / oggetti -->
+    <VBox fx:id="selectionOverlay" visible="false"
+          maxWidth="Infinity" maxHeight="Infinity" alignment="CENTER"
+          styleClass="scrim-modal">
+        <VBox styleClass="selection-panel" maxWidth="780" spacing="0">
+            <padding><Insets top="26" right="32" bottom="26" left="32"/></padding>
+            <Label fx:id="selectionTitle"    styleClass="selection-title"    maxWidth="Infinity"/>
+            <Label fx:id="selectionSubtitle" styleClass="selection-subtitle" maxWidth="Infinity"/>
+            <Region prefHeight="16"/>
+            <FlowPane fx:id="selectionGrid" hgap="14" vgap="14" alignment="CENTER"
+                      prefWrapLength="716"/>
+            <Region prefHeight="20"/>
+            <HBox alignment="CENTER">
+                <Button text="✖  Annulla" onAction="#onSelectionCancel"
+                        styleClass="cancel-selection-btn"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+</StackPane>

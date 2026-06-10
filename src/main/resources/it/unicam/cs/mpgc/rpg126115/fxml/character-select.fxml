@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+
+<!-- ════════════════════════════════════════════════════════════
+     CHARACTER SELECT
+     fx:id invariati: nameField, shinigamiCard, quincyCard,
+       arrancarCard, shinigamiImage, quincyImage, arrancarImage,
+       startButton
+     Handler invariati: #onSelectShinigami #onSelectQuincy
+       #onSelectArrancar #onStart #onBack
+     ════════════════════════════════════════════════════════════ -->
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="it.unicam.cs.mpgc.rpg126115.controller.CharacterSelectController"
+           styleClass="root-pane">
+
+    <Region styleClass="bg-menu" maxWidth="Infinity" maxHeight="Infinity"/>
+    <Region styleClass="scrim-heavy" maxWidth="Infinity" maxHeight="Infinity"
+            mouseTransparent="true"/>
+
+    <BorderPane styleClass="transparent-pane">
+
+        <!-- TOP: titolo + campo nome -->
+        <top>
+            <VBox spacing="6" alignment="CENTER">
+                <padding><Insets top="16" right="40" bottom="10" left="40"/></padding>
+                <Label text="SCEGLI IL TUO PERSONAGGIO" styleClass="page-title"/>
+                <HBox spacing="12" alignment="CENTER">
+                    <Label text="NOME IDENTIFICATIVO:" styleClass="field-label"/>
+                    <TextField fx:id="nameField"
+                               promptText="Lascia vuoto per nome di default..."
+                               prefWidth="300" styleClass="name-field"/>
+                </HBox>
+                <Region styleClass="divider-gold" maxWidth="500"/>
+            </VBox>
+        </top>
+
+        <!-- CENTER: 3 card classe a larghezza uguale -->
+        <center>
+            <GridPane hgap="14" maxWidth="Infinity" maxHeight="Infinity">
+                <padding><Insets top="4" right="16" bottom="4" left="16"/></padding>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="33.34"/>
+                </columnConstraints>
+
+                <!-- ══════════ SHINIGAMI ══════════ -->
+                <VBox fx:id="shinigamiCard" styleClass="class-card"
+                      maxWidth="Infinity" maxHeight="Infinity"
+                      GridPane.columnIndex="0" GridPane.fillWidth="true"
+                      onMouseClicked="#onSelectShinigami">
+
+                    <StackPane styleClass="class-portrait-pane" maxWidth="Infinity">
+                        <ImageView fx:id="shinigamiImage" fitWidth="420" fitHeight="330"
+                                   preserveRatio="true" smooth="true"/>
+                        <Region styleClass="portrait-gradient"
+                                maxWidth="Infinity" maxHeight="Infinity"
+                                mouseTransparent="true"/>
+                        <VBox alignment="BOTTOM_LEFT" maxWidth="Infinity" maxHeight="Infinity"
+                              mouseTransparent="true">
+                            <padding><Insets bottom="12" left="18"/></padding>
+                            <Label text="SHINIGAMI"
+                                   styleClass="class-name-label, shinigami-name"/>
+                            <Label text="Bilanciato · Kido &amp; Zanjutsu"
+                                   styleClass="class-tagline"/>
+                        </VBox>
+                    </StackPane>
+
+                    <VBox styleClass="class-stats-section" spacing="9">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="HP"  styleClass="stat-label, stat-hp"  prefWidth="34"/>
+                            <ProgressBar progress="0.75" styleClass="stat-bar, char-stat-bar, stat-bar-hp"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="75" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="ATK" styleClass="stat-label, stat-atk" prefWidth="34"/>
+                            <ProgressBar progress="0.70" styleClass="stat-bar, char-stat-bar, stat-bar-atk"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="70" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="REI" styleClass="stat-label, stat-rei" prefWidth="34"/>
+                            <ProgressBar progress="0.80" styleClass="stat-bar, char-stat-bar, stat-bar-rei"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="80" styleClass="stat-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="class-desc-section" VBox.vgrow="ALWAYS" spacing="8">
+                        <Label text="Guerriero della Soul Society incaricato di purificare gli Hollow. Padroneggia sia la spada spirituale Zanpakuto che le arti magiche Kido."
+                               wrapText="true" styleClass="class-description"/>
+                        <Label text="⚡ Shikai  →  Bankai" styleClass="class-transforms"/>
+                    </VBox>
+
+                    <Button text="⚔   SCEGLI SHINIGAMI" onAction="#onSelectShinigami"
+                            styleClass="class-select-btn, shinigami-btn" maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- ══════════ QUINCY ══════════ -->
+                <VBox fx:id="quincyCard" styleClass="class-card"
+                      maxWidth="Infinity" maxHeight="Infinity"
+                      GridPane.columnIndex="1" GridPane.fillWidth="true"
+                      onMouseClicked="#onSelectQuincy">
+
+                    <StackPane styleClass="class-portrait-pane" maxWidth="Infinity">
+                        <ImageView fx:id="quincyImage" fitWidth="420" fitHeight="330"
+                                   preserveRatio="true" smooth="true"/>
+                        <Region styleClass="portrait-gradient"
+                                maxWidth="Infinity" maxHeight="Infinity"
+                                mouseTransparent="true"/>
+                        <VBox alignment="BOTTOM_LEFT" maxWidth="Infinity" maxHeight="Infinity"
+                              mouseTransparent="true">
+                            <padding><Insets bottom="12" left="18"/></padding>
+                            <Label text="QUINCY"
+                                   styleClass="class-name-label, quincy-name"/>
+                            <Label text="Raffinato · Arco di Reishi"
+                                   styleClass="class-tagline"/>
+                        </VBox>
+                    </StackPane>
+
+                    <VBox styleClass="class-stats-section" spacing="9">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="HP"  styleClass="stat-label, stat-hp"  prefWidth="34"/>
+                            <ProgressBar progress="0.60" styleClass="stat-bar, char-stat-bar, stat-bar-hp"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="60" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="ATK" styleClass="stat-label, stat-atk" prefWidth="34"/>
+                            <ProgressBar progress="0.95" styleClass="stat-bar, char-stat-bar, stat-bar-atk"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="95" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="REI" styleClass="stat-label, stat-rei" prefWidth="34"/>
+                            <ProgressBar progress="0.90" styleClass="stat-bar, char-stat-bar, stat-bar-rei"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="90" styleClass="stat-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="class-desc-section" VBox.vgrow="ALWAYS" spacing="8">
+                        <Label text="Arciere spirituale umano che assorbe l'energia (Reishi) dall'ambiente. Colpisce da lontano con attacchi ad altissima precisione ed intensità."
+                               wrapText="true" styleClass="class-description"/>
+                        <Label text="⚡ Heilig Bogen  →  Vollständig" styleClass="class-transforms"/>
+                    </VBox>
+
+                    <Button text="🏹   SCEGLI QUINCY" onAction="#onSelectQuincy"
+                            styleClass="class-select-btn, quincy-btn" maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- ══════════ ARRANCAR ══════════ -->
+                <VBox fx:id="arrancarCard" styleClass="class-card"
+                      maxWidth="Infinity" maxHeight="Infinity"
+                      GridPane.columnIndex="2" GridPane.fillWidth="true"
+                      onMouseClicked="#onSelectArrancar">
+
+                    <StackPane styleClass="class-portrait-pane" maxWidth="Infinity">
+                        <ImageView fx:id="arrancarImage" fitWidth="420" fitHeight="330"
+                                   preserveRatio="true" smooth="true"/>
+                        <Region styleClass="portrait-gradient"
+                                maxWidth="Infinity" maxHeight="Infinity"
+                                mouseTransparent="true"/>
+                        <VBox alignment="BOTTOM_LEFT" maxWidth="Infinity" maxHeight="Infinity"
+                              mouseTransparent="true">
+                            <padding><Insets bottom="12" left="18"/></padding>
+                            <Label text="ARRANCAR"
+                                   styleClass="class-name-label, arrancar-name"/>
+                            <Label text="Resistente · Hierro &amp; Cero"
+                                   styleClass="class-tagline"/>
+                        </VBox>
+                    </StackPane>
+
+                    <VBox styleClass="class-stats-section" spacing="9">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="HP"  styleClass="stat-label, stat-hp"  prefWidth="34"/>
+                            <ProgressBar progress="0.95" styleClass="stat-bar, char-stat-bar, stat-bar-hp"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="95" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="ATK" styleClass="stat-label, stat-atk" prefWidth="34"/>
+                            <ProgressBar progress="0.85" styleClass="stat-bar, char-stat-bar, stat-bar-atk"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="85" styleClass="stat-value"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="REI" styleClass="stat-label, stat-rei" prefWidth="34"/>
+                            <ProgressBar progress="0.60" styleClass="stat-bar, char-stat-bar, stat-bar-rei"
+                                         HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Label text="60" styleClass="stat-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="class-desc-section" VBox.vgrow="ALWAYS" spacing="8">
+                        <Label text="Hollow che ha strappato la propria maschera guadagnando potere umano. Resistente e devastante: incassa i colpi mentre le trasformazioni lo rendono inarrestabile."
+                               wrapText="true" styleClass="class-description"/>
+                        <Label text="⚡ Resurrección  →  Segunda Etapa" styleClass="class-transforms"/>
+                    </VBox>
+
+                    <Button text="💀   SCEGLI ARRANCAR" onAction="#onSelectArrancar"
+                            styleClass="class-select-btn, arrancar-btn" maxWidth="Infinity"/>
+                </VBox>
+
+            </GridPane>
+        </center>
+
+        <!-- BOTTOM: pulsanti di navigazione -->
+        <bottom>
+            <HBox spacing="16" alignment="CENTER">
+                <padding><Insets top="10" right="40" bottom="16" left="40"/></padding>
+                <Button text="◀  Indietro" onAction="#onBack"
+                        styleClass="menu-button-danger" prefWidth="160"/>
+                <Button fx:id="startButton" text="▶  Inizia Avventura" onAction="#onStart"
+                        styleClass="menu-button" prefWidth="250" disable="true"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</StackPane>
