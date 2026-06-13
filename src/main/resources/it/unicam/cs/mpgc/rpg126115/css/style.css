@@ -1,0 +1,973 @@
+/* ═══════════════════════════════════════════════════════════════════
+   BLEACH RPG — "Shihakusho" Design System  (v2 — UI refactoring)
+   ───────────────────────────────────────────────────────────────────
+   Palette (art direction):
+     -ink        #0C0C0C   nero profondo (veste Shinigami)
+     -paper      #F5F5F5   bianco candido
+     -reiatsu    #C80000   rosso Reiatsu / sangue (vita, distruzione)
+     -reiryoku   #00D2FF   azzurro spirituale (energia, focus)
+     -bankai     #FFD700   oro acceso (leggendario, attivo)
+
+   Linguaggio visivo: tagli diagonali (-fx-shape "zanpakuto cut"),
+   bordi netti, glow spettrale al hover, gradienti scuri verticali.
+
+   NOTA TECNICA: tutti i nomi delle classi usate da FXML e dai
+   Controller (getStyleClass().add/remove) sono stati conservati.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (looked-up colors, riusabili ovunque) ─────────── */
+.root {
+    -ink:           #0C0C0C;
+    -ink-soft:      #141418;
+    -panel:         #101014;
+    -paper:         #F5F5F5;
+    -paper-dim:     #B8BCC4;
+    -reiatsu:       #C80000;
+    -reiatsu-hi:    #FF3B3B;
+    -reiryoku:      #00D2FF;
+    -reiryoku-deep: #0070A0;
+    -bankai:        #FFD700;
+    -bankai-deep:   #A88600;
+    -hollow:        #6E0F12;
+
+    -fx-font-family: "Segoe UI", "Yu Gothic UI", "Noto Sans", sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: -paper;
+}
+
+.root-pane {
+    -fx-background-color: -ink;
+}
+
+/* ── Background layers (una per area) ────────────────────────────── */
+.bg-menu      { -fx-background-image: url("../images/bg/bg_menu.jpg"); }
+.bg-karakura  { -fx-background-image: url("../images/bg/bg_karakura.jpg"); }
+.bg-seireitei { -fx-background-image: url("../images/bg/bg_seireitei.jpg"); }
+.bg-hueco     { -fx-background-image: url("../images/bg/bg_hueco.jpg"); }
+.bg-battle    { -fx-background-image: url("../images/bg/bg_battle.jpg"); }
+
+.bg-menu, .bg-karakura, .bg-seireitei, .bg-hueco, .bg-battle {
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* Scrim scuri sopra gli sfondi (sostituiscono gli style inline) */
+.scrim          { -fx-background-color: rgba(12,12,12,0.62); }
+.scrim-heavy    { -fx-background-color: rgba(12,12,12,0.76); }
+.scrim-modal    { -fx-background-color: rgba(0,0,0,0.86); }
+
+/* Gradienti cinematografici del game-view */
+.game-overlay-vignette {
+    -fx-background-color:
+        radial-gradient(center 50% 46%, radius 84%,
+            rgba(0,0,0,0) 20%, rgba(8,8,12,0.80) 100%),
+        rgba(0,0,0,0.24);
+}
+.bottom-fade {
+    -fx-background-color: linear-gradient(to top,
+        rgba(8,8,14,0.66) 0%, transparent 42%);
+}
+.top-fade {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(8,8,12,0.60) 0%, transparent 18%);
+}
+
+.transparent-pane { -fx-background-color: transparent; }
+
+/* Divider oro orizzontale (decorazione) */
+.divider-gold {
+    -fx-background-color: linear-gradient(to right,
+        transparent, rgba(255,215,0,0.55), transparent);
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+.divider-gold-soft {
+    -fx-background-color: rgba(255,215,0,0.28);
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAIN MENU
+   ═══════════════════════════════════════════════════════════════════ */
+.menu-content { -fx-background-color: transparent; }
+
+/* Pulsante principale — "taglio di Zanpakuto": parallelogramma netto */
+.menu-button {
+    -fx-shape: "M 18 0 H 240 L 222 56 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", "Segoe UI Black", sans-serif;
+    -fx-font-size: 19px;
+    -fx-text-fill: -paper;
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(200,0,0,0.94) 0%, rgba(110,0,0,0.94) 100%);
+    -fx-border-color: rgba(255,80,80,0.85);
+    -fx-border-width: 1.5;
+    -fx-padding: 15 52 15 52;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.55), 18, 0.28, 0, 0);
+}
+.menu-button:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(255,40,40,0.98) 0%, rgba(160,0,0,0.98) 100%);
+    -fx-border-color: -reiatsu-hi;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255,40,40,0.85), 30, 0.42, 0, 0);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.menu-button:pressed {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(90,0,0,0.98), rgba(130,0,0,0.98));
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.85), 4, 0, 0, 1);
+    -fx-scale-x: 0.99;
+    -fx-scale-y: 0.99;
+}
+.menu-button:disabled {
+    -fx-background-color: rgba(26,26,30,0.78);
+    -fx-text-fill: #4A4D55;
+    -fx-border-color: rgba(70,70,78,0.40);
+    -fx-effect: none;
+}
+
+/* Pulsante secondario/pericolo — ghost con taglio inverso */
+.menu-button-danger {
+    -fx-shape: "M 0 0 H 222 L 240 56 H 18 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", "Segoe UI Black", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(245,245,245,0.78);
+    -fx-background-color: rgba(12,12,12,0.55);
+    -fx-border-color: rgba(200,0,0,0.55);
+    -fx-border-width: 1.2;
+    -fx-padding: 11 40 11 40;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+}
+.menu-button-danger:hover {
+    -fx-background-color: rgba(80,0,0,0.55);
+    -fx-border-color: -reiatsu-hi;
+    -fx-text-fill: #FFB3B3;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.45), 14, 0.22, 0, 0);
+}
+.menu-button-danger:pressed {
+    -fx-background-color: rgba(50,0,0,0.70);
+    -fx-effect: none;
+}
+
+.menu-footer {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(184,188,196,0.42);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GAME VIEW — barra superiore
+   ═══════════════════════════════════════════════════════════════════ */
+.top-bar {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(12,12,12,0.92), rgba(12,12,12,0.80));
+    -fx-border-color: transparent transparent rgba(255,215,0,0.55) transparent;
+    -fx-border-width: 0 0 1.5 0;
+    -fx-padding: 9 18 9 18;
+}
+.top-bar-icon {
+    -fx-text-fill: -reiatsu;
+    -fx-font-size: 16px;
+}
+.area-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 15px;
+    -fx-text-fill: -bankai;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.55), 8, 0.10, 0, 0);
+}
+.stats-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: -paper-dim;
+}
+
+/* ── Pannello ritratto personaggio ───────────────────────────────── */
+.char-portrait-panel {
+    -fx-background-color: rgba(12,12,14,0.93);
+    -fx-border-color: rgba(255,215,0,0.34);
+    -fx-border-width: 1;
+    -fx-padding: 12 8 10 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.70), 16, 0, 0, 4);
+}
+.portrait-caption {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(245,245,245,0.55);
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 7 0 0 0;
+    -fx-wrap-text: true;
+    -fx-font-style: italic;
+}
+
+/* ── Pannello narrativo ──────────────────────────────────────────── */
+.narrative-panel {
+    -fx-background-color: rgba(10,10,13,0.96);
+    -fx-border-color: rgba(255,215,0,0.42);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.10), 30, 0.10, 0, 0);
+}
+.narrative-title-bar {
+    -fx-background-color: linear-gradient(to right,
+        rgba(255,215,0,0.12), rgba(255,215,0,0.03));
+    -fx-border-color: transparent transparent rgba(255,215,0,0.30) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 18 12 16;
+}
+.narrative-title-icon {
+    -fx-text-fill: rgba(255,215,0,0.85);
+    -fx-font-size: 12px;
+}
+.event-title-label {
+    -fx-font-family: "Palatino Linotype", "Georgia", serif;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bankai;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.45), 10, 0.16, 0, 0);
+}
+
+/* Testo a macchina da scrivere.
+   NB: GameController forza #050412 sul contenuto interno — restiamo coerenti. */
+.narrative-area {
+    -fx-control-inner-background: #050412;
+    -fx-text-fill: #E8ECF5;
+    -fx-font-family: "Georgia", "Palatino Linotype", serif;
+    -fx-font-size: 16px;
+    -fx-border-width: 0;
+    -fx-padding: 18 26 14 22;
+    -fx-highlight-fill: rgba(0,210,255,0.35);
+    -fx-highlight-text-fill: #FFFFFF;
+    -fx-line-spacing: 6;
+    -fx-background-color: transparent;
+}
+.narrative-area .content                  { -fx-background-color: #050412; }
+.narrative-area .scroll-pane              { -fx-background-color: transparent; }
+.narrative-area .scroll-pane .viewport    { -fx-background-color: #050412; }
+.narrative-area .scroll-bar               { -fx-background-color: rgba(12,12,12,0.80); }
+.narrative-area .scroll-bar .thumb        { -fx-background-color: rgba(0,210,255,0.35); -fx-background-radius: 0; }
+.narrative-area .scroll-bar .track        { -fx-background-color: rgba(0,0,0,0.55); }
+.narrative-area .scroll-bar .increment-button,
+.narrative-area .scroll-bar .decrement-button { -fx-background-color: transparent; -fx-padding: 2; }
+.narrative-area:focused { -fx-border-color: transparent; }
+
+.narrative-footer {
+    -fx-background-color: rgba(0,0,0,0.30);
+    -fx-border-color: rgba(255,215,0,0.16) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 6 16 9 16;
+}
+.skip-hint {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(245,245,245,0.34);
+    -fx-font-style: italic;
+}
+.skip-btn {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(0,210,255,0.75);
+    -fx-background-color: rgba(0,210,255,0.06);
+    -fx-border-color: rgba(0,210,255,0.35);
+    -fx-border-width: 1;
+    -fx-padding: 3 16 3 16;
+    -fx-cursor: hand;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+.skip-btn:hover {
+    -fx-text-fill: #BDF1FF;
+    -fx-border-color: -reiryoku;
+    -fx-background-color: rgba(0,210,255,0.14);
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.45), 10, 0.20, 0, 0);
+}
+
+/* ── Sezione scelte ──────────────────────────────────────────────── */
+.choices-section {
+    -fx-padding: 10 24 20 24;
+    -fx-background-color: rgba(8,8,10,0.42);
+    -fx-border-color: rgba(255,215,0,0.20) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+.section-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255,215,0,0.85);
+    -fx-padding: 4 0 4 0;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.32), 8, 0.18, 0, 0);
+}
+
+/* Comandi RPG — card a taglio diagonale, accento laterale */
+.choice-button {
+    -fx-shape: "M 10 0 H 420 L 408 52 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -paper;
+    -fx-background-color: linear-gradient(to right,
+        rgba(20,20,24,0.96) 0%, rgba(12,12,14,0.92) 100%);
+    -fx-border-color: rgba(255,215,0,0.62);
+    -fx-border-width: 1;
+    -fx-padding: 16 30 16 26;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.60), 10, 0, 0, 3);
+}
+.choice-button:hover {
+    -fx-background-color: linear-gradient(to right,
+        rgba(34,32,20,0.98) 0%, rgba(18,17,12,0.96) 100%);
+    -fx-border-color: -bankai;
+    -fx-text-fill: -bankai;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.50), 22, 0.22, 0, 0);
+    -fx-translate-x: 8;
+}
+.choice-button:pressed {
+    -fx-translate-x: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.80), 5, 0, 0, 1);
+}
+
+/* Varianti cromatiche (assegnate ciclicamente dal GameController) */
+.choice-btn-1 { -fx-border-color: rgba(255,215,0,0.62); }
+.choice-btn-1:hover {
+    -fx-border-color: -bankai; -fx-text-fill: -bankai;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.55), 24, 0.24, 0, 0);
+}
+.choice-btn-2 { -fx-border-color: rgba(0,210,255,0.60); -fx-text-fill: #CDEFFB; }
+.choice-btn-2:hover {
+    -fx-border-color: -reiryoku; -fx-text-fill: #8FE8FF;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.55), 24, 0.24, 0, 0);
+}
+.choice-btn-3 { -fx-border-color: rgba(245,245,245,0.55); -fx-text-fill: #F5F5F5; }
+.choice-btn-3:hover {
+    -fx-border-color: #FFFFFF; -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(245,245,245,0.45), 24, 0.24, 0, 0);
+}
+.choice-btn-4 { -fx-border-color: rgba(200,0,0,0.62); -fx-text-fill: #F3C8C8; }
+.choice-btn-4:hover {
+    -fx-border-color: -reiatsu-hi; -fx-text-fill: #FF9C9C;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.55), 24, 0.24, 0, 0);
+}
+
+/* Variante combattimento — rosso Reiatsu, più aggressiva */
+.choice-btn-combat {
+    -fx-border-color: rgba(255,59,59,0.78);
+    -fx-text-fill: #FFB3B3;
+    -fx-font-size: 16px;
+}
+.choice-btn-combat:hover {
+    -fx-border-color: -reiatsu-hi;
+    -fx-text-fill: #FF7575;
+    -fx-background-color: linear-gradient(to right,
+        rgba(46,8,8,0.98) 0%, rgba(26,5,5,0.96) 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,40,40,0.60), 28, 0.26, 0, 0);
+}
+
+/* Salvataggio — sobrio, in fondo alle scelte */
+.save-button {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(0,210,255,0.55);
+    -fx-background-color: rgba(10,10,12,0.70);
+    -fx-border-color: transparent transparent transparent rgba(0,210,255,0.40);
+    -fx-border-width: 0 0 0 2;
+    -fx-padding: 9 18 9 14;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+.save-button:hover {
+    -fx-text-fill: rgba(0,210,255,0.95);
+    -fx-background-color: rgba(0,30,40,0.65);
+    -fx-border-color: transparent transparent transparent -reiryoku;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BATTLE VIEW
+   ═══════════════════════════════════════════════════════════════════ */
+.battle-avatar-box {
+    -fx-background-color: rgba(8,8,10,0.74);
+    -fx-border-color: rgba(0,210,255,0.30);
+    -fx-border-width: 1;
+    -fx-padding: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.14), 14, 0.10, 0, 0);
+}
+.enemy-avatar-box {
+    -fx-border-color: rgba(200,0,0,0.40);
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.16), 14, 0.10, 0, 0);
+}
+
+.fighter-name-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: -reiryoku;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.50), 8, 0.10, 0, 0);
+}
+.enemy-name-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: -reiatsu-hi;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.55), 8, 0.10, 0, 0);
+}
+.combatant-stats-mini {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(245,245,245,0.86);
+}
+.transform-state-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bankai;
+    -fx-alignment: center;
+}
+.difficulty-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: -reiatsu-hi;
+    -fx-alignment: center;
+}
+
+/* "VS" centrale */
+.vs-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 24px;
+    -fx-text-fill: -reiatsu;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.65), 10, 0.30, 0, 0);
+}
+
+/* Barre HP / REI — angolari, gradiente Reiatsu/Reiryoku */
+.bar-side-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-min-width: 28px;
+}
+.bar-side-hp    { -fx-text-fill: -reiatsu-hi; }
+.bar-side-rei   { -fx-text-fill: -reiryoku; }
+.bar-side-enemy { -fx-text-fill: #FF8A6B; }
+
+.battle-hp-bar, .battle-rei-bar, .battle-enemy-bar {
+    -fx-background-color: transparent;
+    -fx-pref-height: 12px;
+    -fx-max-height: 12px;
+    -fx-indeterminate-bar-flip: false;
+}
+.battle-hp-bar > .track,
+.battle-rei-bar > .track,
+.battle-enemy-bar > .track {
+    -fx-background-color: rgba(8,8,10,0.94);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(245,245,245,0.14);
+    -fx-border-width: 1;
+}
+.battle-hp-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #7A0000, -reiatsu, -reiatsu-hi);
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.55), 6, 0.30, 0, 0);
+}
+.battle-rei-bar > .bar {
+    -fx-background-color: linear-gradient(to right, -reiryoku-deep, -reiryoku);
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.55), 6, 0.30, 0, 0);
+}
+.battle-enemy-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #3D0506, -hollow, #B41E14);
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+    -fx-effect: dropshadow(gaussian, rgba(140,20,20,0.55), 6, 0.30, 0, 0);
+}
+
+/* Log di battaglia */
+.battle-log-area {
+    -fx-control-inner-background: rgba(8,8,10,0.90);
+    -fx-text-fill: #D9DEE8;
+    -fx-font-size: 12px;
+    -fx-font-family: "Consolas", "Cascadia Mono", monospace;
+    -fx-border-color: rgba(0,210,255,0.22);
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+.battle-log-area .content { -fx-background-color: rgba(8,8,10,0.90); }
+
+/* Barra azioni — comandi in stile picchiaduro (taglio diagonale) */
+.battle-bottom-bar {
+    -fx-background-color: linear-gradient(to top,
+        rgba(12,12,12,0.94), rgba(12,12,12,0.82));
+    -fx-border-color: rgba(255,215,0,0.40) transparent transparent transparent;
+    -fx-border-width: 1.5 0 0 0;
+    -fx-padding: 8 16 12 16;
+}
+.action-prompt {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255,215,0,0.72);
+    -fx-alignment: center;
+}
+
+.action-button {
+    -fx-shape: "M 10 0 H 140 L 130 44 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #CDEFFB;
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(16,28,36,0.94), rgba(10,16,20,0.94));
+    -fx-border-color: rgba(0,210,255,0.50);
+    -fx-border-width: 1.2;
+    -fx-padding: 11 14 11 14;
+    -fx-cursor: hand;
+}
+.action-button:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(0,70,95,0.96), rgba(0,40,55,0.96));
+    -fx-border-color: -reiryoku;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.55), 16, 0.26, 0, 0);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+.action-button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: none;
+}
+.action-button:disabled {
+    -fx-opacity: 0.45;
+    -fx-effect: none;
+}
+
+/* Trasformazione (Bankai / Resurrección) — oro leggendario */
+.transform-button {
+    -fx-shape: "M 10 0 H 140 L 130 44 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: -bankai;
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(58,44,0,0.94), rgba(30,22,0,0.94));
+    -fx-border-color: rgba(255,215,0,0.62);
+    -fx-border-width: 1.2;
+    -fx-padding: 11 14 11 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.22), 10, 0.12, 0, 0);
+}
+.transform-button:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(110,84,0,0.96), rgba(64,48,0,0.96));
+    -fx-border-color: -bankai;
+    -fx-text-fill: #FFF3B8;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.65), 20, 0.34, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.transform-button:pressed { -fx-scale-x: 0.98; -fx-scale-y: 0.98; -fx-effect: none; }
+.transform-button:disabled { -fx-opacity: 0.45; -fx-effect: none; }
+
+/* ── Overlay selezione (abilità / oggetti) ───────────────────────── */
+.selection-panel {
+    -fx-background-color: linear-gradient(to bottom, #121216, #0C0C0C);
+    -fx-border-color: rgba(255,215,0,0.45);
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.92), 50, 0.50, 0, 0);
+}
+.selection-title {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 21px;
+    -fx-text-fill: -bankai;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.40), 10, 0.20, 0, 0);
+}
+.selection-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(245,245,245,0.72);
+    -fx-alignment: center;
+    -fx-padding: 3 0 0 0;
+}
+.selection-card {
+    -fx-background-color: linear-gradient(to bottom, #16161B, #0E0E11);
+    -fx-border-color: rgba(0,210,255,0.30);
+    -fx-border-width: 1;
+    -fx-padding: 14 18 14 18;
+    -fx-min-width: 148;
+    -fx-max-width: 185;
+    -fx-cursor: hand;
+}
+.selection-card:hover {
+    -fx-background-color: linear-gradient(to bottom, #102733, #0A1B24);
+    -fx-border-color: -reiryoku;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.45), 16, 0.28, 0, 0);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+.selection-card-icon  { -fx-font-size: 30px; -fx-alignment: center; }
+.selection-card-name  { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -paper; -fx-alignment: center; }
+.selection-card-detail{ -fx-font-size: 11px; -fx-text-fill: rgba(0,210,255,0.80); -fx-alignment: center; }
+
+.cancel-selection-btn {
+    -fx-shape: "M 8 0 H 160 L 152 40 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-background-color: linear-gradient(to bottom, #4A0A0A, #2A0505);
+    -fx-text-fill: #FFB3B3;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: rgba(200,0,0,0.55);
+    -fx-border-width: 1;
+    -fx-padding: 8 30 8 30;
+    -fx-cursor: hand;
+}
+.cancel-selection-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #6E1010, #450A0A);
+    -fx-border-color: -reiatsu-hi;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.45), 12, 0.20, 0, 0);
+}
+
+/* ── Schermata finale Vittoria / Sconfitta ───────────────────────── */
+.end-panel {
+    -fx-background-color: linear-gradient(to bottom, #121216, #0C0C0C);
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.95), 70, 0.65, 0, 0);
+    -fx-alignment: center;
+}
+.end-panel-victory { -fx-border-color: rgba(255,215,0,0.80); }
+.end-panel-defeat  { -fx-border-color: rgba(200,0,0,0.75); }
+
+.end-title-victory {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 48px;
+    -fx-text-fill: -bankai;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.85), 32, 0.52, 0, 0);
+}
+.end-title-defeat {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 48px;
+    -fx-text-fill: -reiatsu-hi;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.85), 32, 0.52, 0, 0);
+}
+.end-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: rgba(245,245,245,0.90);
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 3;
+}
+.end-details {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bankai;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 5;
+}
+.end-confirm-btn {
+    -fx-shape: "M 12 0 H 220 L 208 48 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 15px;
+    -fx-text-fill: -paper;
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(0,70,95,0.96), rgba(0,40,55,0.96));
+    -fx-border-color: rgba(0,210,255,0.55);
+    -fx-border-width: 1.2;
+    -fx-padding: 12 40 12 40;
+    -fx-cursor: hand;
+}
+.end-confirm-btn:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(0,105,140,0.98), rgba(0,62,84,0.98));
+    -fx-border-color: -reiryoku;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.55), 16, 0.32, 0, 0);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+.end-confirm-btn:pressed { -fx-scale-x: 0.98; -fx-scale-y: 0.98; -fx-effect: none; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHARACTER SELECT
+   ═══════════════════════════════════════════════════════════════════ */
+.page-title {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 36px;
+    -fx-text-fill: -paper;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.75), 26, 0.36, 0, 0);
+}
+.field-label {
+    -fx-text-fill: rgba(245,245,245,0.60);
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+.name-field {
+    -fx-background-color: rgba(12,12,14,0.94);
+    -fx-text-fill: -paper;
+    -fx-border-color: rgba(0,210,255,0.40);
+    -fx-border-width: 0 0 1.5 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-prompt-text-fill: rgba(245,245,245,0.32);
+    -fx-padding: 6 10 6 10;
+    -fx-highlight-fill: rgba(0,210,255,0.35);
+}
+.name-field:focused {
+    -fx-border-color: -reiryoku;
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.35), 8, 0.12, 0, 2);
+}
+
+/* Card classe */
+.class-card {
+    -fx-background-color: rgba(12,12,14,0.92);
+    -fx-border-color: rgba(245,245,245,0.14);
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.72), 14, 0, 0, 5);
+}
+.class-card:hover {
+    -fx-background-color: rgba(16,16,20,0.95);
+    -fx-border-color: rgba(0,210,255,0.55);
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.28), 20, 0.12, 0, 0);
+    -fx-translate-y: -4;
+}
+.class-card-selected {
+    -fx-border-color: -bankai !important;
+    -fx-border-width: 2 !important;
+    -fx-background-color: rgba(20,18,8,0.95) !important;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.55), 24, 0.24, 0, 0) !important;
+}
+
+/* Riquadro ritratto della card */
+.class-portrait-pane {
+    -fx-background-color: -ink;
+    -fx-min-height: 310;
+    -fx-pref-height: 330;
+}
+.portrait-gradient {
+    -fx-background-color: linear-gradient(to top,
+        rgba(12,12,12,0.98) 0%,
+        rgba(12,12,12,0.80) 22%,
+        rgba(12,12,12,0.30) 50%,
+        transparent 80%);
+}
+.class-name-label {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 27px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.85), 6, 0.25, 0, 1);
+}
+.shinigami-name { -fx-text-fill: -reiryoku; }
+.quincy-name    { -fx-text-fill: -paper; }
+.arrancar-name  { -fx-text-fill: -reiatsu-hi; }
+.class-tagline {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(245,245,245,0.62);
+    -fx-font-style: italic;
+}
+
+/* Statistiche della card */
+.class-stats-section {
+    -fx-padding: 12 16 8 16;
+    -fx-border-color: rgba(245,245,245,0.10) transparent rgba(245,245,245,0.10) transparent;
+    -fx-border-width: 1 0 1 0;
+    -fx-background-color: rgba(0,0,0,0.26);
+}
+.stat-label { -fx-font-size: 11px; -fx-font-weight: bold; }
+.stat-hp  { -fx-text-fill: -reiatsu-hi; }
+.stat-atk { -fx-text-fill: -bankai; }
+.stat-rei { -fx-text-fill: -reiryoku; }
+.stat-value {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(245,245,245,0.62);
+    -fx-min-width: 24px;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.stat-bar { -fx-pref-height: 7px; }
+.stat-bar > .track { -fx-background-color: rgba(8,8,10,0.88); -fx-background-radius: 0; }
+.stat-bar > .bar   { -fx-background-radius: 0; }
+
+.char-stat-bar {
+    -fx-pref-height: 11px;
+    -fx-min-height: 11px;
+    -fx-max-height: 11px;
+}
+.char-stat-bar > .track {
+    -fx-background-color: rgba(8,8,10,0.92);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(245,245,245,0.12);
+    -fx-border-width: 1;
+}
+.char-stat-bar > .bar {
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+}
+.stat-bar-hp  > .bar { -fx-background-color: linear-gradient(to right, #7A0000, -reiatsu-hi); }
+.stat-bar-atk > .bar { -fx-background-color: linear-gradient(to right, -bankai-deep, -bankai); }
+.stat-bar-rei > .bar { -fx-background-color: linear-gradient(to right, -reiryoku-deep, -reiryoku); }
+
+/* Descrizione */
+.class-desc-section { -fx-padding: 10 16 10 16; }
+.class-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(245,245,245,0.66);
+    -fx-line-spacing: 2.5;
+    -fx-wrap-text: true;
+}
+.class-transforms {
+    -fx-font-size: 11px;
+    -fx-text-fill: -bankai;
+    -fx-font-weight: bold;
+}
+
+/* Pulsanti di selezione classe */
+.class-select-btn {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 14 20 14 20;
+    -fx-cursor: hand;
+    -fx-text-fill: -paper;
+    -fx-border-width: 1.5 0 0 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+.shinigami-btn {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(0,82,110,0.92), rgba(0,46,62,0.96));
+    -fx-border-color: rgba(0,210,255,0.55);
+}
+.shinigami-btn:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(0,120,160,0.97), rgba(0,74,100,0.99));
+    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.50), 16, 0.20, 0, 0);
+}
+.quincy-btn {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(70,74,86,0.92), rgba(36,38,46,0.96));
+    -fx-border-color: rgba(245,245,245,0.50);
+}
+.quincy-btn:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(106,112,128,0.97), rgba(62,66,78,0.99));
+    -fx-effect: dropshadow(gaussian, rgba(245,245,245,0.40), 16, 0.20, 0, 0);
+}
+.arrancar-btn {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(140,8,8,0.92), rgba(84,4,4,0.96));
+    -fx-border-color: rgba(255,59,59,0.55);
+}
+.arrancar-btn:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(200,16,16,0.97), rgba(140,8,8,0.99));
+    -fx-effect: dropshadow(gaussian, rgba(255,59,59,0.50), 16, 0.20, 0, 0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BUILD / EQUIPAGGIAMENTO
+   ═══════════════════════════════════════════════════════════════════ */
+.build-btn {
+    -fx-shape: "M 10 0 H 200 L 190 44 H 0 Z";
+    -fx-scale-shape: true;
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: -bankai;
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(255,215,0,0.18), rgba(168,134,0,0.12));
+    -fx-border-color: rgba(255,215,0,0.62);
+    -fx-border-width: 1.4;
+    -fx-padding: 12 0 12 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.22), 10, 0.14, 0, 2);
+}
+.build-btn:hover {
+    -fx-background-color: linear-gradient(to bottom,
+        rgba(255,215,0,0.34), rgba(186,148,0,0.24));
+    -fx-border-color: -bankai;
+    -fx-text-fill: #FFF3B8;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.60), 18, 0.30, 0, 0);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.build-btn:pressed { -fx-scale-x: 0.98; -fx-scale-y: 0.98; -fx-effect: none; }
+
+.equip-panel {
+    -fx-background-color: linear-gradient(to bottom, #121216, #0C0C0C);
+    -fx-border-color: rgba(255,215,0,0.50);
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.95), 60, 0.60, 0, 0);
+}
+.equip-panel-title {
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 23px;
+    -fx-text-fill: -bankai;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.45), 12, 0.22, 0, 0);
+}
+.equip-panel-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(245,245,245,0.48);
+    -fx-font-style: italic;
+    -fx-alignment: center;
+}
+.equip-slot-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(255,215,0,0.85);
+    -fx-alignment: center;
+}
+.equip-slot-card {
+    -fx-background-color: rgba(12,12,14,0.95);
+    -fx-border-color: rgba(255,215,0,0.28);
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+.equip-slot-card-filled {
+    -fx-border-color: rgba(255,215,0,0.62);
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.18), 14, 0.15, 0, 0);
+}
+.equip-slot-card-filled:hover {
+    -fx-border-color: -reiatsu-hi;
+    -fx-effect: dropshadow(gaussian, rgba(200,0,0,0.30), 14, 0.18, 0, 0);
+}
+.equip-stats-box {
+    -fx-background-color: rgba(12,12,14,0.95);
+    -fx-border-color: rgba(0,210,255,0.26);
+    -fx-border-width: 1;
+    -fx-min-height: 115;
+}
+.equip-stats-text {
+    -fx-font-family: "Consolas", "Cascadia Mono", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #CDEFFB;
+    -fx-line-spacing: 5;
+}
+.equip-bag-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(255,215,0,0.70);
+    -fx-alignment: center;
+}
+.equip-bag-card {
+    -fx-background-color: linear-gradient(to bottom, #16161B, #0E0E11);
+    -fx-border-color: rgba(255,215,0,0.28);
+    -fx-border-width: 1;
+    -fx-padding: 12 16 12 16;
+    -fx-min-width: 148;
+    -fx-max-width: 172;
+    -fx-cursor: hand;
+}
+.equip-bag-card:hover {
+    -fx-background-color: linear-gradient(to bottom, #221E10, #15120A);
+    -fx-border-color: -bankai;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.42), 16, 0.22, 0, 0);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+
+/* ── Scrollbar (tema scuro globale) ──────────────────────────────── */
+.scroll-bar:vertical { -fx-background-color: transparent; }
+.scroll-bar .thumb   { -fx-background-color: rgba(0,210,255,0.30); -fx-background-radius: 0; }
+.scroll-bar .thumb:hover { -fx-background-color: rgba(0,210,255,0.55); }
+.scroll-bar .track   { -fx-background-color: transparent; }
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button { -fx-background-color: transparent; }
