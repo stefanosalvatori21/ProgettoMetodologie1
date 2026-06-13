@@ -25,11 +25,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameState newGame(String playerName, PlayerClass playerClass) {
-        Player player = switch (playerClass) {
-            case SHINIGAMI -> new Shinigami(playerName);
-            case QUINCY    -> new Quincy(playerName);
-            case ARRANCAR  -> new Arrancar(playerName);
-        };
+        Player player = playerClass.createPlayer(playerName);
         player.addItem(new HealingPotion("Pozione Curativa",   40));
         player.addItem(new HealingPotion("Pozione Curativa",   40));
         player.addItem(new ReiatsuDrink("Tè dello Spirito",    30));

@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg126115;
 
+import it.unicam.cs.mpgc.rpg126115.model.entity.EnemyFactory;
 import it.unicam.cs.mpgc.rpg126115.repository.impl.JsonGameStateRepository;
 import it.unicam.cs.mpgc.rpg126115.service.*;
 import it.unicam.cs.mpgc.rpg126115.service.impl.*;
@@ -17,7 +18,7 @@ public class App extends Application {
         CharacterService characterService = new CharacterServiceImpl();
         LootService      lootService      = new LootServiceImpl();
         GameService      gameService      = new GameServiceImpl(characterService, lootService);
-        BattleService    battleService    = new BattleServiceImpl();
+        BattleService    battleService    = new BattleServiceImpl(EnemyFactory::create);
         NarrativeService narrativeService = new NarrativeServiceImpl();
         SaveLoadService  saveLoadService  = new SaveLoadServiceImpl(repository);
 

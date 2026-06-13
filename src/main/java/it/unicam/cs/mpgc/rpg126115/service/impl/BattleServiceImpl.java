@@ -9,9 +9,15 @@ import it.unicam.cs.mpgc.rpg126115.service.BattleService;
 
 public class BattleServiceImpl implements BattleService {
 
+    private final EnemyCreator enemyCreator;
+
+    public BattleServiceImpl(EnemyCreator enemyCreator) {
+        this.enemyCreator = enemyCreator;
+    }
+
     @Override
     public BattleState startBattle(Player player, EnemyType enemyType) {
-        Enemy enemy = EnemyFactory.create(enemyType);
+        Enemy enemy = enemyCreator.create(enemyType);
         player.resetBattleState();
         return new BattleState(player, enemy);
     }

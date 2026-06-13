@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg126115.model.equipment;
 
+import it.unicam.cs.mpgc.rpg126115.model.entity.stats.Stats;
+
 public abstract class Equipment {
     private final String        name;
     private final String        description;
@@ -27,4 +29,7 @@ public abstract class Equipment {
 
     /** Short label shown on cards, e.g. "+12 ATK" or "+8 DEF  +10 HP". */
     public abstract String getStatsSummary();
+
+    public abstract void applyBonus(Stats stats);
+    public abstract void removeBonus(Stats stats);
 }

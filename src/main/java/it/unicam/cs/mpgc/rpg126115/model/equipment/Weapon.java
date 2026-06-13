@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg126115.model.equipment;
 
+import it.unicam.cs.mpgc.rpg126115.model.entity.stats.Stats;
+
 public class Weapon extends Equipment {
     private final int bonusAtk;
 
@@ -13,4 +15,14 @@ public class Weapon extends Equipment {
 
     @Override
     public String getStatsSummary() { return "+" + bonusAtk + " ATK"; }
+
+    @Override
+    public void applyBonus(Stats stats) {
+        stats.setAttack(stats.getAttack() + bonusAtk);
+    }
+
+    @Override
+    public void removeBonus(Stats stats) {
+        stats.setAttack(Math.max(1, stats.getAttack() - bonusAtk));
+    }
 }
